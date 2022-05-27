@@ -1,0 +1,215 @@
+/*Format Keluaran:
+Gunakan mesin karakter untuk mengerjakan soal ini. Diberikan sebuah pita yang menggunakan tanda end of file berupa tanda $ (dollar). Pita ini berisi karakter-karakter berupa huruf dan karakter angka. Periksalah pita, apakah di setiap kelompok karakter (banyaknya kelompok karakter diambil dari masukan) memiliki sebuah karakter masukan. Tampilkan jumlah kelompok karakter yang memenuhi syarat. Kelompok terakhir yang jumlah karakternya kurang dari angka masukan tidak perlu dihitung.
+Format Masukan:
+integer, jumlah banyaknya karakter per kelompok.
+karakter masukan yang perlu diperiksa pada setiap kelompok karakter. string pita dengan maksimal karakter 500 karakter.
+
+jumlah kelompok karakter yang memenuhi syarat.
+
+
+misalkan contoh masukan adalah:
+
+3
+a
+aku adalah anak gembala$
+
+maka keluaran akan didapat dari kelompok karakter per 3 karakter.
+
+aku
+ada
+lah
+ana
+kge
+mba
+
+dimana jumlah kelompok karakter yang memenuhi syarat adalah 5 yaitu
+
+aku
+ada
+lah
+ana
+mba*/
+
+#include <stdio.h>
+#include <string.h>
+
+int idx;
+int wlen;
+char cw[52];
+int sama;
+int kel;
+
+int eop(char str[])
+{
+    // memeriksa apakah karakter saat ini merupakan simbol akhir dari pita
+    if (str[idx] == '$')
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+void start(char str[])
+{
+    // inisiaisasi indeks dan karakter yang dibaca
+    idx = 0;
+    wlen = 0;
+
+    // jika karakter dalam pita adalah spasi dan koma,indeks akan terus maju
+    while (str[idx] == ' ' || str[idx] == ',')
+    {
+        idx++;
+    }
+
+    // Jika masukan berupa karakter selain spasi dan EOP,Kata diatur ke variabel global
+    while ((str[idx] == ' ') && (eop(str) == 0))
+    {
+        cw[wlen] = str[idx];
+        idx++;
+        wlen++;
+    }
+
+    // MEngatur agar kata saat ini indeks terakhirnya menjadi NULL
+    cw[wlen] = '\0';
+}
+
+void reset()
+{
+    // inisisalisasi panjang kata dan kata saat ini agar NULL
+    wlen = 0;
+    cw[wlen] = '\0';
+}
+
+
+// prosedur untuk memajukan mesin kata
+void inc(char str[])
+{
+    // inisialisasi ulang panjang kata
+    wlen = 0;
+
+    // jika karakter dalam pita adalah spasi dan koma,indeks akan terus maju
+    while (str[idx] == ' ' || str[idx] == ',')
+    {
+        idx++;
+    }
+
+    // jika masukan berupa karakter selain koma dan EOP,kata diautr ke variabel global
+    while ((str[idx] != ',') && (str[idx] != '$'))
+    {
+        cw[wlen] = str[idx];
+        idx++;
+        wlen++;
+    }
+
+    // mengatur agar kata saat ini indeks terakirnya menjadi NULL
+    cw[wlen] = '\0';
+}
+
+// prosedur unutk mengurutkan abjad
+void selection(char str[][101], int banyak)
+{
+    int i, j, minIndex;
+    char temp[101];
+
+    // perulangan dilakukan sebnayak isi array yang dimulai dari index 1
+    for (i = 0; i < banyak - 1; i++)
+    {
+        // array ke-i akan menjadi data untuk disisipkan
+        minIndex = i;
+
+        // perulanganterhadap isi array yang berada sebelum index ke-i
+        /*perulangan berlangsung hingga mencapi index ke-0 atau selama
+        array ke-j nilainya lebih besar dari key (array[j] > key)*/
+        for (j = i + 1; j < banyak; j++)
+        {
+            if (strcmp(str[minIndex], str[j]) > 0)
+            {
+                minIndex = j;
+            }
+        }
+        // tukar posisi nilai pada index minimum dengan index i
+        strcpy(temp, str[i]);
+        strcpy(str[i], str[minIndex]);
+        strcpy(str[minIndex], temp);
+    }
+}
+
+// Bagian mendapatkan atribut mesin kata
+
+// fungsi untuk mendapatkan panjang kata saat ini
+int getlen()
+{
+    return wlen;
+}
+
+// fungsi untuk mendapatkan indeks pita saat ini
+
+int getidx()
+{
+    return idx;
+}
+
+// fungsi unutuk mendapatknan kata  saat ini
+char *getcw()
+{
+    return cw;
+}
+
+int hurufsama(char str[], char huruf)
+{
+    sama = 0;
+    int i;
+
+    if (str[0] == huruf)
+    {
+        sama = 1;
+    }
+    else
+    {
+        sama = 0;
+    }
+    // printf("%d\n", sama);
+    return sama;
+}
+
+int bagiKelompok(int lastIndex, char* input, char* kelompok, int length) {
+    int i;
+    for (i = 0; i < length && lastIndex < strlen(input); lastIndex++) {
+        char karakter = input[lastIndex];
+        if (karakter == ' ') continue;
+        kelompok[i++] = karakter;
+    }
+    return lastIndex;
+}
+
+int masukKriteria(char* kelompok, char syarat) {
+    for (int i = 0; i < strlen(kelompok); i++) {
+        if (kelompok[i] == syarat){
+            return 1;
+        } else{
+             return 0;
+        }
+    }
+}
+
+int main()
+{
+    int jumlah;
+    char syarat;
+    char input[500];
+    char str[jumlah];
+    scanf("%d %c\n", &jumlah, &syarat);
+    scanf("%499[^\n]s", input);
+    char* kelompok = char str[jumlah];
+    int lastIndex = 0;
+    while (1) {
+        if (lastIndex + jumlah >= strlen(input)) break;
+        int newIndex = bagiKelompok(lastIndex, input, kelompok, jumlah);
+        if (masukKriteria(kelompok, syarat)) printf("%s\n", kelompok);
+        lastIndex = newIndex;
+    }
+    return 0;
+}
